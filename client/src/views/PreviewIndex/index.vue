@@ -26,7 +26,7 @@
                             </el-icon>销售可视
                         </template>
                         <el-menu-item-group>
-                            <el-menu-item index="3-1">产品销售情况</el-menu-item>
+                            <el-menu-item index="3-1" @click="goEchart">产品销售情况</el-menu-item>
                         </el-menu-item-group>
                     </el-sub-menu>
                     <el-menu-item index="4-1" v-if="isAdmin" @click="goCategory">
@@ -104,6 +104,7 @@ import ManService from './Connection/ManService.vue'
 import CateShow from './CateShow.vue'
 import Category from './OnlyAdmin/Category.vue'
 import Product from './OnlyAdmin/Product.vue'
+import Echarts from './echarts/index.vue'
 import myEventBus from "../../eventBus/index.js";
 
 import { useRoute, useRouter } from 'vue-router';
@@ -135,6 +136,9 @@ const goProduct = () => {
     currentComponent.value = Product
 }
 
+const goEchart = () => {
+    currentComponent.value = Echarts
+}
 
 // 点击头部，切换组件
 const goShop = () => {
