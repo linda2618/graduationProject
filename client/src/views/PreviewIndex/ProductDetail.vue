@@ -14,7 +14,7 @@
                         <el-card v-loading="loading">
                             <div class="store">
                                 <span>
-                                    所属店铺： {{ productInfo.shop }}
+                                    所属店铺： {{ productInfo?.shop }}
                                 </span>
                                 <span @click="goStore">
                                     <el-icon>
@@ -30,15 +30,18 @@
                                         style="width: 100%" />
                                 </div>
                                 <div class="content">
-                                    <span class="title">{{ productInfo.title }}</span>
+                                    <span class="title">{{ productInfo.tilte }}</span>
                                     <span class="jia">￥<span class="price">{{ productInfo.price }}</span></span>
                                     <span>{{ productInfo.content }}</span>
                                     <span>付款后48小时内发货</span>
-                                    <span>生产时间：{{ productInfo.create_time }}</span>
-                                    <!-- 立即购买/加入购物车 -->
+                                    <span>生产时间：{{ formatDate(productInfo.create_time) }}</span>
+                                    <span v-if="productInfo.update_time">最近上线时间：{{
+                                        formatDate(productInfo.update_time) }}</span>
+                                    <!-- 立即购买formatDate/加入购物车 -->
                                     <div class="car">
                                         <el-button @click="noOption" type="danger">立即购买</el-button>
-                                        <el-button v-if="productInfo.is_car == 1" type="warning" @click="addToCar(0)">取消购物车</el-button>
+                                        <el-button v-if="productInfo.is_car == 1" type="warning"
+                                            @click="addToCar(0)">取消购物车</el-button>
                                         <el-button v-else type="warning" @click="addToCar(1)">加入购物车</el-button>
                                         <!-- <span class="collect"><el-icon>
                                                 <Star />
@@ -67,6 +70,7 @@ import { ref, reactive, inject, onMounted, shallowRef, onBeforeUnmount} from 'vu
 import { useRoute, useRouter } from 'vue-router'
 import { Search } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { formatDate } from './until'
 
 import FixedHeader from '../../components/fixedHeader.vue'
 import FixedAside from '../../components/fixedAside.vue'
@@ -80,7 +84,18 @@ const router = useRouter()
 const search = ref('')
 const showAside = ref(true)
 const showPre = ref(false)
-let productInfo = ref({})
+let productInfo = ref({
+    product_id: 0,
+    category_id: 0,
+    tilte: "",
+    content: "",
+    price: 0,
+    is_car: 0,
+    checked: 0,
+    num: 1,
+    shop: '',
+    img_src: '',
+})
 const loading = ref(true)
 
 const isShow = (val, type) => {
@@ -99,9 +114,9 @@ const isShow = (val, type) => {
 
 const getProductInfo = async() => {
     //获取货品id
-    const id = route.query.id
+    const product_id = route.query.id
 
-    let result = await axios.get('/product/detail', { params: { id } })
+    let result = await axios.get('/product/detail', { params: { product_id } })
 
     if (result.data.code == 200) {
         productInfo.value = result.data.rows[0];

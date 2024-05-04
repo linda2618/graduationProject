@@ -57,7 +57,8 @@ router.get('/search', async(req, res) => {
         params.push(category_id)
     }
     if(keyword != ""){
-        whereSqls.push("(title LIKE ? OR content LIKE ?) ")
+        whereSqls.push("(tilte LIKE ? OR content LIKE ? OR shop LIKE ?) ")
+        params.push("%" + keyword + "%")
         params.push("%" + keyword + "%")
         params.push("%" + keyword + "%")
     }
@@ -100,12 +101,14 @@ router.get('/search', async(req, res) => {
 
 //添加商品
 router.post('/add', async(req, res) => {
-    let {category_id, title, content,  price, is_car, checked, num, shop, img_src,} = req.body
+    let {category_id, tilte, content,  price, is_car, checked, num, shop, img_src,} = req.body
 
-    let create_time =  new Date().getTime()
-    let insert_sql = "INSERT INTO product(product_id, category_id, shop, img_src, price, title, content, create_time, checked, is_car, num) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+    let create_time = new Date().getTime()
+    console.log(create_time)
+    
+    let insert_sql = "INSERT INTO product(product_id, category_id, shop, img_src, price, tilte, content, create_time, checked, is_car, num) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
 
-   let {err, rows} = await db.async.run(insert_sql, [genId.NextId(), category_id, shop, img_src, price, title, content, create_time, checked, is_car, num])
+   let {err, rows} = await db.async.run(insert_sql, [genId.NextId(), category_id, shop, img_src, price, tilte, content, create_time, checked, is_car, num])
 
    if(err == null){
     res.send({
@@ -130,7 +133,7 @@ router.put('/car', async(req, res) => {
    if(err == null){
     res.send({
         code:200, 
-        msg:'加入购物车成功'
+        msg: '加入购物车成功'
     })
     }else{
         res.send({
@@ -165,11 +168,12 @@ router.put('/checked', async(req, res) => {
 
 //修改商品信息
 router.put('/update', async(req, res) => {
-    let{product_id, category_id, shop, img_src, price, title, content, num, checked} = req.body
+    let{product_id, category_id, shop, img_src, price, tilte, content, num, checked} = req.body
 
-    let update_time =  new Date().getTime()
-    let update_sql = "UPDATE product SET category_id = ?, shop = ?, img_src = ?, price = ?, title = ?, content = ?, update_time = ?, num = ?, checked = ? WHERE product_id = ?"
-    let params = [category_id, shop, img_src, price, title, content, update_time, num, checked, product_id]
+    let update_time = new Date().getTime()
+    console.log(update_time)
+    let update_sql = "UPDATE product SET category_id = ?, shop = ?, img_src = ?, price = ?, tilte = ?, content = ?, update_time = ?, num = ?, checked = ? WHERE product_id = ?"
+    let params = [category_id, shop, img_src, price, tilte, content, update_time, num, checked, product_id]
     let { err, rows } = await db.async.run(update_sql, params)
     
    if(err == null){

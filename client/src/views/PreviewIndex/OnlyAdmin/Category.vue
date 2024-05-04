@@ -16,7 +16,7 @@
         <el-dialog v-model="showAddModal" title="添加分类">
             <el-form :model="addCategory">
                 <el-form-item label="名称">
-                    <el-input v-model="addCategory.title" placeholder="请输入名称"></el-input>
+                    <el-input v-model="addCategory.tilte" placeholder="请输入名称"></el-input>
                 </el-form-item>
             </el-form>
             <div slot="footer">
@@ -29,12 +29,12 @@
         <el-dialog v-model="showUpdateModal" title="修改分类">
             <el-form :model="updateCategory">
                 <el-form-item label="名称">
-                    <el-input v-model="updateCategory.title" placeholder="请输入名称"></el-input>
+                    <el-input v-model="updateCategory.tilte" placeholder="请输入名称"></el-input>
                 </el-form-item>
             </el-form>
             <div slot="footer">
                 <el-button @click="cancelUpdate">取消</el-button>
-                <el-button type="primary" @click="updateMessage(updateCategory.title)">提交</el-button>
+                <el-button type="primary" @click="updateMessage(updateCategory.tilte)">提交</el-button>
             </div>
         </el-dialog>
     </div>
@@ -68,18 +68,18 @@ const loadDatas = async () => {
 
 //添加、修改数据
 const updateCategory = reactive({
-    title: "",
+    tilte: "",
     id: 0,
 });
 
 const addCategory = reactive({
-    title: "",
+    tilte: "",
 });
 
 //修改按钮
 const toUpdate = (item) => {
     showUpdateModal.value = true;
-    updateCategory.title = item.title;
+    updateCategory.tilte = item.tilte;
     updateCategory.id = item.id;
 };
 
@@ -88,14 +88,14 @@ const showAddModal = ref(false); //显示隐藏添加弹框
 const showUpdateModal = ref(false); //显示隐藏修改弹框
 
 const addMessage = async () => {
-    if (!addCategory.title.trim()) {
+    if (!addCategory.tilte.trim()) {
         ElMessage.error("请输入内容");
         return;
     }
 
     let res = await axios.post(
         "/category/add",
-        { title: addCategory.title.trim() }
+        { tilte: addCategory.tilte.trim() }
     );
 
     if (res.data.code == 200) {
@@ -104,18 +104,18 @@ const addMessage = async () => {
     } else {
         ElMessage.error(res.data.msg);
     }
-    addCategory.title = "";
+    addCategory.tilte = "";
     showAddModal.value = false;
     getBorder();
 };
 const updateMessage = async (value) => {
-    if (!updateCategory.title.trim()) {
+    if (!updateCategory.tilte.trim()) {
         ElMessage.error("请输入内容");
         return;
     }
 
     let res = await axios.put("/category/update", {
-        title: updateCategory.title.trim(),
+        tilte: updateCategory.tilte.trim(),
         id: updateCategory.id,
     });
     if (res.data.code) {

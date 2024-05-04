@@ -4,9 +4,12 @@
         <!-- 搜索部分 -->
         <div class="search">
             <el-input v-model="keyword" style="width: 440px" placeholder="输入宝贝" clearable class="search_input" />
+            <el-select placeholder="查询分类" v-model="category_id" style="width: 140px" class="search_input">
+                <el-option v-for="item in categoryOptions" :key="item.value" :label="item.label" :value="item.value" />
+            </el-select>
             <el-button type="success" class="search_button" @click="searchPro">搜索</el-button>
             <el-button type="info" class="search_button" @click="back">返回</el-button>
-
+            <el-button type="info" class="search_button" @click="getProductInfo">回到全部</el-button>
         </div>
 
         <!-- 图片轮播 -->
@@ -36,11 +39,14 @@
             <h3>猜你喜欢</h3>
             <el-image :src="xi" class="guess_img" />
         </div>
-        <div v-loading="loading" class="guess_main">
+        <div v-loading="loading" class="guess_main" v-if="detailInfos.length > 0">
             <div class="guess_card" v-for="item in detailInfos">
                 <PreviewCard :detailInfo="item" @click="goDetail(item.product_id)">
                 </PreviewCard>
             </div>
+        </div>
+        <div v-else class="guess_no">
+            查询不到商品哦~~
         </div>
 
         <!-- 侧边固定tab -->
@@ -67,6 +73,7 @@ import FixedAside from '../../components/fixedAside.vue'
 const axios = inject("axios")
 const router = useRouter()
 const keyword = ref('')
+const category_id = ref()
 const showAside = ref(false)
 const loading = ref(true)
 
@@ -108,11 +115,42 @@ const changeCount = (e) => {
    currentIndex.value = e % 6
 }
 
+const categoryOptions = ref([])
+
+//查询所有分类
+const loadDatas = async () => {
+    try {
+        let result = await axios.get('/category/getList')
+        categoryOptions.value = result.data.rows.map((item) => {
+            return {
+                label: item.title,
+                value: item.id
+            }
+        })
+    } catch (error) {
+        ElMessage.error(error.msg)
+    }
+}
+
 //商品详情
-let detailInfos = reactive([])
+let detailInfos = reactive([
+    {
+        product_id: 0,
+        category_id: 0,
+        tilte: "",
+        content: "",
+        price: 0,
+        is_car: 0,
+        checked: 0,
+        num: 1,
+        shop: '',
+        img_src: '',
+    }
+])
 
 //获取全部商品
 const getProductInfo = async () => {
+    loading.value = true
     let result = await axios.get('/product/info')
 
     if (result.data.code == 200) {
@@ -163,11 +201,19 @@ const goTop = () => {
 
 // 搜索
 const searchPro = async () => {
+    loading.value = true
     let key = keyword.value
+    let id = category_id.value
     // let res = await axios.get(`/product/search?category_id=${1}`)
-    let res = await axios.get(`/product/search?keyword=${key}`)
+    let res = await axios.get(`/product/search?keyword=${key}&category_id=${id}`)
+    console.log(res.data.data.rows)
     if (res.data.code == 200) {
-        detailInfos = res.data.rows;
+        detailInfos = res.data.data.rows;
+        setTimeout(() => {
+            loading.value = false
+        }, 1000)
+        keyword.value = ''
+        category_id.value = 0
     } else {
         ElMessage.error("查询失败！")
     }
@@ -175,8 +221,8 @@ const searchPro = async () => {
 
 onMounted(() => {
     window.addEventListener('scroll', handleScroll);
-
     getProductInfo();
+    loadDatas()
 });
 
 onBeforeUnmount(() => {
@@ -238,12 +284,17 @@ onBeforeUnmount(() => {
     background-color:rgba(241, 239, 237);
     min-height: 200px;
 
-
     .guess_card {
         margin-right: 20px;
         margin-bottom: 20px;
     }
+}
 
+.guess_no {
+    min-height: 180px;
+    font-size: 16px;
+    background-color: rgb(213, 212, 212);
+    padding-top: 20px;
 }
 
 </style>

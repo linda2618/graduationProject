@@ -6,7 +6,7 @@
                     <el-image :src="detailInfo.img_src" class="card_img"></el-image>
                 </div>
                 <div class="card_content">
-                    <span class="title">{{ detailInfo.title }}</span>
+                    <span class="tilte">{{ detailInfo.tilte }}</span>
                     <br />
                     <span class="content">{{ detailInfo.content }}</span>
                     <br />
@@ -55,7 +55,7 @@ onMounted(() => {
         margin-top: 10px;
         cursor: pointer;
 
-        .title {
+        .tilte {
             font-weight: bold;
         }
 

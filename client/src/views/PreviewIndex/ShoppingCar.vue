@@ -46,7 +46,7 @@
                 <div class="main">
                   <div class="img">
                     <el-image :src="item.dataSrc" class="card_img"></el-image>
-                    <div class="title">{{ item.title }}</div>
+                    <div class="title">{{ item.tilte }}</div>
                   </div>
                   <div class="content">
                     {{ item.content }}
@@ -168,7 +168,7 @@ const handleSingle = async (item, type) => {
     const result = await axios.put('/product/checked', {
       product_id: item.product_id,
       checked: newCheckedState,
-    });
+    })
 
     if (result.data.code == 200) {
       getCarInfo();

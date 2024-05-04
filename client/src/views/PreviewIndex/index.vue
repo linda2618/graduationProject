@@ -16,7 +16,7 @@
                         </template>
                         <el-menu-item-group>
                             <el-menu-item v-for="(item, index) in categoryLists" :index="`2-${index + 1}`"
-                                @click="goCateShow(item.id)">{{ item.title }}</el-menu-item>
+                                @click="goCateShow(item.id)">{{ item.tilte }}</el-menu-item>
                         </el-menu-item-group>
                     </el-sub-menu>
                     <el-sub-menu index="3">
