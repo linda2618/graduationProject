@@ -26,8 +26,9 @@
                             <el-divider />
                             <div class="info">
                                 <div class="img">
-                                    <img src="https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png"
-                                        style="width: 100%" />
+                                    <div v-html="productInfo.img_src"
+                                        style=" min-width: 280px; max-width: 400px; min-height: 280px; overflow: hidden;">
+                                    </div>
                                 </div>
                                 <div class="content">
                                     <span class="title">{{ productInfo.tilte }}</span>

@@ -1,9 +1,11 @@
 <template>
     <div>
-        <el-card style="max-width: 310px; padding: 0px" shadow="hover">
+        <el-card style="max-width: 422px; padding: 0px" shadow="hover">
             <div class="card_container">
-                <div>
-                    <el-image :src="detailInfo.img_src" class="card_img"></el-image>
+                <div class="card_img">
+                    <div v-html="detailInfo.img_src" style=" min-width: 180px;
+                        max-width: 210px; max-height: 200px; overflow: hidden;">
+                    </div>
                 </div>
                 <div class="card_content">
                     <span class="tilte">{{ detailInfo.tilte }}</span>
@@ -27,7 +29,7 @@ const props = defineProps({
 })
 
 onMounted(() => {
-    // console.log(props.detailInfo.img_src, 'src') //  ../assets/images/1.png
+    console.log(props.detailInfo.img_src, 'src') //<p><img src="http://localhost:8080/upload561392112013381.png" alt="" data-href="" style=""/></p>
 })
 
 
@@ -45,8 +47,10 @@ onMounted(() => {
     }
     
     .card_img {
-        width: 128px;
-        height: 140px;
+        min-width: 180px;
+        max-width: 210px;
+        max-height: 200px;
+        overflow: hidden;
     }
 
     .card_content {
@@ -57,29 +61,27 @@ onMounted(() => {
 
         .tilte {
             font-weight: bold;
+            margin-top: 25px;
         }
 
         .price {
+            position: absolute;
+            top: 142px;
             font-size: 16px;
             color: red;
         }
         .content {
             font-size: 12px;
-            padding-top: 10px;
+            padding-top: 40px;
             word-break: break-all;
             text-overflow: ellipsis;
             display: -webkit-box;
             -webkit-box-orient: vertical;
-            -webkit-line-clamp: 3; /* 超出几行省略 */
+            -webkit-line-clamp: 4; /* 超出几行省略 */
             overflow: hidden;       
         }
         .content:hover {
             color: hsla(160, 100%, 37%, 1);
-        }
-
-        .price {
-            position: absolute;
-            top: 112px;
         }
     }
    

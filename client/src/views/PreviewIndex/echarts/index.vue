@@ -7,9 +7,8 @@
       <LineChart v-if="line" />
     </div>
     <div class="title">
-
-      <el-button type="success" class="search_button" @click="goLine">柱状图展示</el-button>
       <el-button type="info" class="search_button" @click="goBar">折线图展示</el-button>
+      <el-button type="success" class="search_button" @click="goLine">柱状图展示</el-button>
     </div>
   </div>
 </template>

@@ -80,5 +80,6 @@ const handleChange = (editor) => {
 <style lang="scss" scoped>
 .edit {
     margin-top: 80px;
+    height: 390px;
 }
 </style>

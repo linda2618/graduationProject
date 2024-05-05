@@ -1,26 +1,40 @@
 <template>
     <div class="article-container">
         <el-card>
+            <!-- 搜索部分 -->
+            <div class="search">
+                <el-input v-model="keyword" style="width: 440px" placeholder="输入宝贝" clearable class="search_input" />
+                <el-select placeholder="查询分类" v-model="category_id" style="width: 140px" class="search_input">
+                    <el-option v-for="item in categoryOptions" :key="item.value" :label="item.label"
+                        :value="item.value" />
+                </el-select>
+                <el-button type="success" class="search_button" @click="searchPro">搜索</el-button>
+                <el-button type="info" class="search_button" @click="getAllProduct">回到全部</el-button>
+            </div>
+
             <el-tabs v-model="tabValue" type="border-card">
                 <el-tab-pane name="list" label="商品列表" class="list">
-                    <div v-for="(item, product_id) in productList" :key="product_id" class="blogList">
-                        <el-card style="width: 400px;">
-                            <div>
-                                店铺：{{ item.shop }}
-                                <br>
-                                商品名：{{ item.tilte }}
-                                <br>
-                                商品描述：{{ item.content }}
-                            </div>
-                            <template #footer>
-                                <el-space align="center">
-                                    <div class="time">发布时间： {{ formatDate(item.create_time) }}</div>
-                                    <el-button type="primary" @click="toUpdate(item)">修改</el-button>
-                                    <el-button type="danger" @click="toDelete(item)">删除</el-button>
-                                </el-space>
-                            </template>
-                        </el-card>
+                    <div v-loading="loading">
+                        <div v-for="(item, product_id) in productList" :key="product_id" class="blogList">
+                            <el-card style="width: 400px;">
+                                <div>
+                                    店铺：{{ item.shop }}
+                                    <br>
+                                    商品名：{{ item.tilte }}
+                                    <br>
+                                    商品描述：{{ item.content }}
+                                </div>
+                                <template #footer>
+                                    <el-space align="center">
+                                        <div class="time">发布时间： {{ formatDate(item.create_time) }}</div>
+                                        <el-button type="primary" @click="toUpdate(item)">修改</el-button>
+                                        <el-button type="danger" @click="toDelete(item)">删除</el-button>
+                                    </el-space>
+                                </template>
+                            </el-card>
+                        </div>
                     </div>
+
                 </el-tab-pane>
 
                 <el-tab-pane name="add" label="添加商品">
@@ -42,6 +56,9 @@
                         </el-form-item>
                         <el-form-item label="商品价格">
                             <el-input v-model="addProduct.price" placeholder="请输入单价" />
+                        </el-form-item>
+                        <el-form-item label="商品图片描述">
+                            <TextEditor v-model="addProduct.img_src"></TextEditor>
                         </el-form-item>
                         <el-form-item>
                             <el-button @click="add" type="primary">提交</el-button>
@@ -69,6 +86,9 @@
                         <el-form-item label="商品价格">
                             <el-input v-model="updateProduct.price" placeholder="请输入单价" />
                         </el-form-item>
+                        <el-form-item label="商品图片描述">
+                            <TextEditor v-model="updateProduct.img_src"></TextEditor>
+                        </el-form-item>
                         <el-form-item>
                             <el-button @click="update" type="primary">提交</el-button>
                         </el-form-item>
@@ -83,9 +103,12 @@
 import { ref, reactive, inject, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { formatDate } from '../until'
+import TextEditor from '../../../components/TextEditor.vue'
 
 const axios = inject("axios")
 
+const keyword = ref('')
+const category_id = ref()
 //添加
 const addProduct = reactive({
     category_id: 0,
@@ -114,9 +137,9 @@ const updateProduct = reactive({
 })
 
 const categoryOptions = ref([])
-//博客列表
 const productList = ref([])
 const tabValue = ref('list')
+const loading = ref(true)
 
 onMounted(() => {
     getAllProduct()
@@ -131,9 +154,32 @@ const getAllProduct = async () => {
 
         if (result.data.code == 200) {
             productList.value = result.data.rows;
+            setTimeout(() => {
+                loading.value = false
+            }, 1000)
         } 
     }catch(error) {
         ElMessage.error(error.msg)
+    }
+}
+
+// 搜索
+const searchPro = async () => {
+    loading.value = true
+    let key = keyword.value
+    let id = category_id.value
+    // let res = await axios.get(`/product/search?category_id=${1}`)
+    let res = await axios.get(`/product/search?keyword=${key}&category_id=${id}`)
+    console.log(res.data.data.rows)
+    if (res.data.code == 200) {
+        productList.value = res.data.data.rows;
+        setTimeout(() => {
+            loading.value = false
+        }, 1000)
+        keyword.value = ''
+        category_id.value = 0
+    } else {
+        ElMessage.error("查询失败！")
     }
 }
 
@@ -193,6 +239,7 @@ const toUpdate = async (pro) => {
     updateProduct.content = res.data.rows[0].content
     updateProduct.shop = res.data.rows[0].shop
     updateProduct.price = res.data.rows[0].price
+    updateProduct.img_src = res.data.rows[0].img_src
 }
 
 //提交修改
@@ -232,6 +279,19 @@ const toDelete = async (pro) => {
 </script>
 
 <style lang="scss" scoped>
+
+ .search {
+     width: 100%;
+     height: 100px;
+
+     .search_input,
+     .search_button {
+         margin-left: 20px;
+         margin-top: 35px;
+
+     }
+ }
+
 .article-container {
     font-size: 14px;
     opacity: 0.9;
@@ -246,8 +306,6 @@ const toDelete = async (pro) => {
         }
     }
 }
-
-
 
 .time {
     // margin-right: 70px;

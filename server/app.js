@@ -62,6 +62,8 @@ app.use('/blog', require('./routers/BlogRouter.js'))
 app.use('/upload', require('./routers/UploadRouter.js'))
 app.use('/user', require('./routers/UserLogin.js'))
 app.use('/product', require('./routers/ProductRouter.js'))
+app.use('/img', require('./routers/images.js'))
+// app.use('/img', require('./routers/img.js'))
 
 
 app.get('/',(req, res) => {
